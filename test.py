@@ -61,3 +61,7 @@ class TestFileIOExample(unittest.TestCase):
 
             self.assertIsInstance(filename_list, list)
             self.assertEqual(len(filename_list), i)
+
+
+if __name__ == '__main__':
+    unittest.main()
