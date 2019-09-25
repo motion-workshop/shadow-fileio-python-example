@@ -1,0 +1,3 @@
+fastavro
+numpy
+git+git://github.com/motion-workshop/shadow-fileio-python
