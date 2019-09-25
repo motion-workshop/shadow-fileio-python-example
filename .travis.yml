@@ -5,8 +5,10 @@ dist: xenial
 
 language: python
 
-# Install the codecov pip dependency.
-install: pip install codecov
+# Install the codecov dependency and other required modules.
+install:
+  - pip install codecov
+  - pip install -r requirements.txt
 
 # Download some take data and place in a ~/Documents/Motion folder.
 before_script:
