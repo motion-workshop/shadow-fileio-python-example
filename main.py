@@ -28,9 +28,7 @@ import shadow.fileio
 
 import logging
 import numpy as np
-
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger(__name__)
+import os
 
 
 def load_take(path=None):
@@ -64,14 +62,10 @@ def load_take(path=None):
     #    ...
     #    [axN ayN azN]]
     #
-    stride = int(info['frame_stride'] / 4)
     num_frame = int(info['num_frame'])
+    stride = int(info['frame_stride'] / 4)
 
     data = np.reshape(np.array(data), (num_frame, stride))
-
-    # Time in seconds.
-    h = info.get('h', 0.01)
-    x = np.arange(0, num_frame) * h
 
     return path, info, node_map, data
 
@@ -85,7 +79,7 @@ def make_field_list(node_map):
     conflicts with case insensitive field names in database schemas (like
     BigQuery).
     """
-    fields = []
+    field_list = []
     for name in node_map:
         for channel in node_map[name]:
             item = node_map[name][channel]
@@ -107,18 +101,27 @@ def make_field_list(node_map):
                 axis_list = ['']
 
             for axis in axis_list:
-                fields.append(''.join([channel_name, axis]))
+                field_list.append(''.join([channel_name, axis]))
 
-    return fields
+    return field_list
 
 
 def main(argv):
     import argparse
 
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+
     parser = argparse.ArgumentParser(
         description='Convert a take to an Avro or CSV formatted file')
 
-    parser.add_argument('--format', choices=['avro', 'csv'], default='avro')
+    parser.add_argument(
+        '--quiet', action='store_true', help='suppress console output')
+    parser.add_argument(
+        '--format', choices=['avro', 'csv'], default='avro',
+        help='choose the output file format')
+    parser.add_argument(
+        '--output', type=str,
+        help='output filename, defaults to "data.avro" in take folder')
     parser.add_argument('path', nargs='*')
 
     args = parser.parse_args(argv)
@@ -131,7 +134,10 @@ def main(argv):
         path, info, node_map, data = load_take(path)
 
         fields = make_field_list(node_map)
-        filename = '{}/data.{}'.format(path, args.format)
+        if args.output:
+            filename = os.path.normpath(args.output)
+        else:
+            filename = os.path.join(path, 'data.{}'.format(args.format))
 
         if args.format == 'avro':
             from write_avro import write_avro
@@ -145,6 +151,10 @@ def main(argv):
                 np.savetxt(f, data, fmt='%.6f', delimiter=',')
 
         filename_list.append(filename)
+
+    if not args.quiet:
+        for filename in filename_list:
+            logging.info('wrote output file "{}"'.format(filename))
 
     return filename_list
 

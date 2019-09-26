@@ -38,12 +38,12 @@ class TestFileIOExample(unittest.TestCase):
         self.assertIsInstance(filename_list, list)
         self.assertEqual(len(filename_list), 1)
 
-        filename_list = main(['--format=avro'])
+        filename_list = main(['--format=avro', '--output=out.avro'])
 
         self.assertIsInstance(filename_list, list)
         self.assertEqual(len(filename_list), 1)
 
-        filename_list = main(['--format=csv'])
+        filename_list = main(['--format=csv', '--quiet'])
 
         self.assertIsInstance(filename_list, list)
         self.assertEqual(len(filename_list), 1)
