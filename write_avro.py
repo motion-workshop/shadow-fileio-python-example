@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, Motion Workshop
+# Copyright (c) 2021, Motion Workshop
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-import shadow.fileio
-
 from datetime import datetime
 import fastavro
-import logging
 
 
 def data_node_generator(fields, data, timestamp):
